@@ -1,6 +1,7 @@
 import os
 import readchar
 import random
+from functools import reduce
 
 class Juego:
     def __init__(self, mapa, start, end):
@@ -46,15 +47,25 @@ class JuegoArchivo(Juego):
         mapa, start, end = self.parse_map_file(map_file)
         super().__init__(mapa, start, end)
 
+    def parse_map(self, map_string):
+        # Usar la función map para convertir cada línea en una lista de caracteres
+        map_matrix = list(map(list, map_string.strip().split('\n')))
+        return map_matrix
+
     def parse_map_file(self, map_file):
         with open(map_file, 'r') as f:
             lines = f.readlines()
+
+        # Usar reduce para concatenar todas las filas leídas en una sola cadena
+        map_string = reduce(lambda x, y: x + y, lines[3:], "").strip()
 
         dimensions = lines[0].strip().split(',')
         rows, cols = int(dimensions[0]), int(dimensions[1])
         start = tuple(map(int, lines[1].strip().split(',')))
         end = tuple(map(int, lines[2].strip().split(',')))
-        mapa = [list(line.strip()) for line in lines[3:]]
+
+        # Usar la función parse_map para convertir la cadena en una matriz
+        mapa = self.parse_map(map_string)
 
         return mapa, start, end
 
@@ -74,3 +85,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
